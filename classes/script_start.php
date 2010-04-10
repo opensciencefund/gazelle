@@ -266,6 +266,7 @@ $Debug->set_flag('end user handling');
 
 $Debug->set_flag('start function definitions');
 // Get cached user info, is used for the user loading the page and usernames all over the site
+
 function user_info($UserID) {
 	global $DB, $Cache;
 	$UserInfo = $Cache->get_value('user_info_'.$UserID);
@@ -1385,25 +1386,33 @@ function get_artists($GroupIDs, $Escape = array()) {
 /**
  * Returns an associative array containing the snatched torrents for $uid, assuming
  * that the caller's context has permission (checked from $LoggedUser). 
+ * 
+ * If $cache is set, then it will check memcached for an entry for $uid. This will only presently
+ * be placed in the cache if 
  * @param $uid The user to check
  */
-function get_snatched_torrents($uid, $limit) {
-	if(!check_perms('users_view_seedleech') && $uid!=$LoggedUser['ID'] && $Paranoia>=2) { error(403); }
-		$TorrentJoin="JOIN xbt_snatched AS xs ON xs.fid=t.ID AND xs.uid='$UserID'";
-		$Title="Snatched Torrents";
-		$TimeField="xs.tstamp";
-		$TimeLabel="Snatched Time";
+function get_snatched_torrents($uid) {
+	global $DB;
+	global $Cache;
+	$cache_snatched = $Cache->get_value("snatched");
+	
+	if(is_array($cache_snatched)) { return $cache_snatched; }
+	if(!check_perms('users_view_seedleech') && $uid != $LoggedUser['ID'] && $Paranoia>=2) { return array(); }
+	$r = array();
+	
 	$q = "
 		SELECT
-			xs.fid AS TorrentID,
-			xs.tstamp AS Timestamp
+			xs.fid
 		FROM
 			xbt_snatched AS xs
 		WHERE
-			xs.uid = $uid
-		LIMIT $limit";
-	
-	return 0;
+			xs.uid = $uid";
+	$DB->query($q);
+	while(list($id) = $DB->next_record()) {
+		$r[] = $id;
+	}
+	$Cache->cache_value("snatched", $r);
+	return $r;
 }
 
 /**

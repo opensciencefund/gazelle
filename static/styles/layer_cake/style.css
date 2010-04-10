@@ -572,6 +572,9 @@ ul.poll li.graph {
 .torrent_table tr.group_torrent {
 	background-color:#fafafa;
 }
+.torrent_table tr.snatched {
+	background-color: #ffd;
+}
 .torrent_table tr.torrent {
 	background-color:#ddd;
 }

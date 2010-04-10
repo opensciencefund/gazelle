@@ -189,6 +189,7 @@ foreach ($TorrentList as $GroupID=>$Group) {
 	$LastRemasterCatalogueNumber = '';
 	
 	foreach ($Torrents as $TorrentID => $Torrent) {
+		$Highlight = (in_array($Torrent["ID"], get_snatched_torrents($LoggedUser["ID"])) ? 'snatched' : '');
 		$NumTorrents++;
 		
 		$Torrent['Seeders'] = (int)$Torrent['Seeders'];
@@ -231,7 +232,7 @@ foreach ($TorrentList as $GroupID=>$Group) {
 		$LastRemasterRecordLabel = $Torrent['RemasterRecordLabel'];
 		$LastRemasterCatalogueNumber = $Torrent['RemasterCatalogueNumber'];
 ?>
-	<tr class="releases_<?=$ReleaseType?> group_torrent discog <?=$HideDiscog?>">
+	<tr class="releases_<?=$ReleaseType?> <?= $Highlight ?> group_torrent discog <?=$HideDiscog?>">
 		<td>
 			<span>
 				[<a href="torrents.php?action=download&amp;id=<?=$TorrentID?>&amp;authkey=<?=$LoggedUser['AuthKey']?>&amp;torrent_pass=<?=$LoggedUser['torrent_pass']?>" title="Download">DL</a>]
