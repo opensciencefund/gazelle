@@ -350,7 +350,7 @@ foreach ($TorrentList as $Torrent) {
 	list($TorrentID, $Media, $Format, $Encoding, $Remastered, $RemasterYear, $RemasterTitle, $RemasterRecordLabel, $RemasterCatalogueNumber, 
 		$Scene, $HasLog, $HasCue, $LogScore, $FileCount, $Size, $Seeders, $Leechers, $Snatched, $FreeTorrent, $TorrentTime, $Description, 
 		$FileList, $UserID, $Username, $LastActive) = $Torrent;
-	
+	$Highlight = (in_array($TorrentID, get_snatched_torrents($LoggedUser["ID"])) ? "snatched" : "");
 	$Reported = false;
 	unset($ReportedTimes);
 
@@ -458,7 +458,7 @@ foreach ($TorrentList as $Torrent) {
 	$LastRemasterCatalogueNumber = $RemasterCatalogueNumber;
 ?>
 
-			<tr class="group_torrent" style="font-weight: normal;">
+			<tr class="group_torrent <?= $Highlight ?> " style="font-weight: normal;">
 				<td>
 					<span>[
 						<a href="torrents.php?action=download&amp;id=<?=$TorrentID ?>&amp;authkey=<?=$LoggedUser['AuthKey']?>&amp;torrent_pass=<?=$LoggedUser['torrent_pass']?>" title="Download">DL</a>

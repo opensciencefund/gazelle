@@ -891,6 +891,7 @@ if ($LoggedUser['DefaultSearch']) {
 			$Row = 'a';
 			foreach($Torrents['id'] as $Key => $Val) {
 				// All of the individual torrents in the group
+				$Highlight = (($_GET["type"] != "snatched" && in_array($Val, get_snatched_torrents($LoggedUser["ID"]))) ? "snatched" : "");
 				
 				// If they're using the advanced search and have chosen enabled grouping, we just skip the torrents that don't check out
 				if(!empty($_GET['bitrate']) && $Torrents['encoding'][$Key]!=$_GET['bitrate']) { continue; }
@@ -945,7 +946,7 @@ if ($LoggedUser['DefaultSearch']) {
 				if($Torrents['year'][$Key]>"0") 	{ $ExtraInfo.=$AddExtra.$Torrents['year'][$Key]; $AddExtra=" / "; }
 				if($Torrents['freetorrent'][$Key]=="1") { $ExtraInfo.=$AddExtra."<strong>Freeleech!</strong>"; $AddExtra=" / "; }
 ?>
-	<tr class="group_torrent groupid_<?=$GroupID?> <?=$HideGroup?>">
+	<tr class="group_torrent <?= $Highlight ?> groupid_<?=$GroupID?> <?=$HideGroup?>">
 		<td colspan="3">
 			<span>
 				[<a href="torrents.php?action=download&amp;id=<?=$Torrents['id'][$Key]?>&amp;authkey=<?=$LoggedUser['AuthKey']?>&amp;torrent_pass=<?=$LoggedUser['torrent_pass']?>" title="Download">DL</a>
@@ -963,6 +964,7 @@ if ($LoggedUser['DefaultSearch']) {
 <?
 			}
 		} else {
+			$Highlight = (($_GET["type"] != "snatched" && in_array($Torrents["id"][0], get_snatched_torrents($LoggedUser["ID"]))) ? "snatched" : "");
 			// Either grouping is disabled, or we're viewing a type that does not require grouping
 			if ($GroupCategoryID==1) {
 				$DisplayName.='<a href="torrents.php?id='.$GroupID.'&amp;torrentid='.$Torrents['id'][0].'" title="View Torrent">'.$GroupName.'</a>';
@@ -989,7 +991,7 @@ if ($LoggedUser['DefaultSearch']) {
 			
 			if (!isset($TimeField) || $TimeField=="t.Time") { $GroupTime=strtotime($GroupTime); }
 ?>
-	<tr class="torrent">
+	<tr class="torrent <?= $Highlight ?>">
 <?			if(!$DisableGrouping) { ?>
 		<td></td>
 <?			} ?>
