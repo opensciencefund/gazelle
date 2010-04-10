@@ -3,7 +3,7 @@
 		Hook system for plugins. Plugins shall listen for events by registering their interest
 		in this class (->register()). 
 	*/
-	class HOOKS {
+	class HOOK {
 		/**
 			List of listening plugins registered with this class. Each event string is a 
 			key, and its value is a list of functions to be called when the event is raised.
