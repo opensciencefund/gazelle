@@ -44,6 +44,7 @@ require(SERVER_ROOT.'/classes/class_encrypt.php'); //Require the encryption clas
 require(SERVER_ROOT.'/classes/class_useragent.php'); //Require the useragent class
 require(SERVER_ROOT.'/classes/class_time.php'); //Require the time class
 require(SERVER_ROOT.'/classes/class_search.php'); //Require the searching class
+require(SERVER_ROOT.'/classes/class_hook.php'); //Require the searching class
 
 $Debug = new DEBUG;
 $Debug->handle_errors();
@@ -53,6 +54,7 @@ $Cache = new CACHE;
 $Enc = new CRYPT;
 $UA = new USER_AGENT;
 $SS = new SPHINX_SEARCH;
+$Hook = new HOOK;
 
 
 
@@ -1664,13 +1666,15 @@ function selected($Name, $Value, $Attribute='selected') {
 
 function error($Error, $Ajax=false) {
 	require(SERVER_ROOT.'/sections/error/index.php');
+	global $Hook;
+	$Hook->raise("error." . $Error);
 	die();
 }
 $Debug->set_flag('ending function definitions');
 //Include /sections/*/index.php
 $Document = basename(parse_url($_SERVER['SCRIPT_FILENAME'], PHP_URL_PATH), '.php');
 if(!preg_match('/^[a-z0-9]+$/i', $Document)) { error(404); }
-
+if(!file_exists(SERVER_ROOT.'/sections/'.$Document.'/index.php')) error(404);
 require(SERVER_ROOT.'/sections/'.$Document.'/index.php');
 $Debug->set_flag('completed module execution');
 /*
