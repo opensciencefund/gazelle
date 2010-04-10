@@ -1,6 +1,4 @@
-CREATE DATABASE gazelle;
-
-USE gazelle;
+USE gazelle-vanilla;
 
 CREATE TABLE `api_applications` (
   `ID` int(10) NOT NULL AUTO_INCREMENT,
