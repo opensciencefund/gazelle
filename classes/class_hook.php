@@ -1,4 +1,5 @@
 <?php
+	require_once "config.php";
 	/**
 		Hook system for plugins. Plugins shall listen for events by registering their interest
 		in this class (->register()). 
@@ -16,8 +17,15 @@
 				return false;
 			$hooks = $hooks->item(0);
 			
-			foreach($hooks->childNodes as $hook) {
-				$hooks[$hook["event"]] = array("file" => $path . $hook["file"], "function" => $hook["function"]);
+			$hooks = $hooks->getElementsByTagName("hook");
+			
+			foreach($hooks as $hook) {
+				$this->hooks[
+					$hook->attributes->getNamedItem("event")->value
+				][] = array(
+					"file" => $path . $hook->attributes->getNamedItem("file")->value, 
+					"function" => $hook->attributes->getNamedItem("function")->value
+				);
 			}
 		}
 		
@@ -25,17 +33,17 @@
 			Looks through the plugins/ folder and registers hooks.
 		*/
 		function scan_plugins() {
-			$files = scandir(SERVER_ROOT."plugins/");
+			$files = scandir(SERVER_ROOT."/plugins/");
 			foreach($files as $file) {
 				if($file == "." || $file == "..") continue;
 				
-				if(is_dir(SERVER_ROOT."plugins/".$file)) {
-					if(file_exists(SERVER_ROOT."plugins/$file/config.xml")) {
+				if(is_dir(SERVER_ROOT."/plugins/".$file)) {
+					if(file_exists(SERVER_ROOT."/plugins/$file/config.xml")) {
 						$xml = new DOMDocument;
-						if(!$xml->load(SERVER_ROOT."plugins/$file/config.xml")) {
+						if(!$xml->load(SERVER_ROOT."/plugins/$file/config.xml")) {
 							continue; // Not loading an invalid config file.
 						}
-						_import_plugin(SERVER_ROOT."plugins/$file/", $xml);
+						$this->_import_plugin(SERVER_ROOT."/plugins/$file/", $xml);
 					}
 				}
 			}
@@ -46,16 +54,15 @@
 			event to trigger. 
 			
 			@param $event 	What event was raised.
-			@param $arguments	Arguments to pass to listening functions, in the form of an associative array.
+			@param $arguments	Arguments to pass to listening functions.
 		*/
 		function raise($event, $arguments = array()) {
-			if(!isset($hooks[$event]))
+			if(!isset($this->hooks[$event]))
 				return;
 				
-			foreach($hooks[$event] as $f) {
+			foreach($this->hooks[$event] as $f) {
 				require_once($f["file"]);
-				$func = $f["function"];
-				$func($arguments);
+				call_user_func_array($f["function"], $arguments);
 			}
 		}
 		
@@ -64,7 +71,7 @@
 			ever the $event is raised. This is called internally in scan_plugins().
 			
 			@param $event What event to listen for.
-			@param $func	Static function receiving exaclty one argument, an associative array.
+			@param $func	Static function receiving a variable number of arguments. 
 		*/
 		function _register($event, $func) {
 			$hooks[$event][] = $func;
