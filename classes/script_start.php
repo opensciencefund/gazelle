@@ -55,7 +55,7 @@ $Enc = new CRYPT;
 $UA = new USER_AGENT;
 $SS = new SPHINX_SEARCH;
 $Hook = new HOOK;
-
+$Hook->scan_plugins();
 
 
 
