@@ -4,6 +4,4 @@
 			die("Hello World!");
 		}
 	}
-	
-	$Hook->register("error.404", Hello::Test);
 ?>

@@ -1,0 +1,3 @@
+<hooks>
+	<hook file="Hello.php" event="error.404" function="Hello::Test" />
+</hooks>
