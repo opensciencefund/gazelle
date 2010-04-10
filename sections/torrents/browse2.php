@@ -587,6 +587,7 @@ foreach($Results as $GroupID=>$Data) {
 		$LastRemasterCatalogueNumber = '';
 
 		foreach($Torrents as $TorrentID => $Data) {
+			$Highlight = (($_GET["type"] != "snatched" && in_array($TorrentID, get_snatched_torrents($LoggedUser["ID"]))) ? "snatched" : "");
 			// All of the individual torrents in the group
 			
 			// If they're using the advanced search and have chosen enabled grouping, we just skip the torrents that don't check out
@@ -702,7 +703,7 @@ foreach($Results as $GroupID=>$Data) {
 			$LastRemasterRecordLabel = $Data['RemasterRecordLabel'];
 			$LastRemasterCatalogueNumber = $Data['RemasterCatalogueNumber'];
 ?>
-	<tr class="group_torrent groupid_<?=$GroupID?><? if (!empty($LoggedUser['TorrentGrouping']) && $LoggedUser['TorrentGrouping']==1) { echo ' hidden'; }?>">
+	<tr class="group_torrent <?= $Highlight ?> groupid_<?=$GroupID?><? if (!empty($LoggedUser['TorrentGrouping']) && $LoggedUser['TorrentGrouping']==1) { echo ' hidden'; }?>">
 		<td colspan="3">
 			<span>
 				[<a href="torrents.php?action=download&amp;id=<?=$TorrentID?>&amp;authkey=<?=$LoggedUser['AuthKey']?>&amp;torrent_pass=<?=$LoggedUser['torrent_pass']?>" title="Download">DL</a>

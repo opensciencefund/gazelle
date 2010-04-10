@@ -1409,7 +1409,7 @@ function get_snatched_torrents($uid) {
 			xs.uid = $uid";
 	$DB->query($q);
 	while(list($id) = $DB->next_record()) {
-		$r[] = $id;
+		array_push($r, $id);
 	}
 	$Cache->cache_value("snatched", $r);
 	return $r;
