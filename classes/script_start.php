@@ -1393,11 +1393,13 @@ function get_artists($GroupIDs, $Escape = array()) {
  */
 function get_snatched_torrents($uid) {
 	global $DB;
-	global $Cache;
-	$cache_snatched = $Cache->get_value("snatched");
+	static $r;
 	
-	if(is_array($cache_snatched)) { return $cache_snatched; }
-	if(!check_perms('users_view_seedleech') && $uid != $LoggedUser['ID'] && $Paranoia>=2) { return array(); }
+	if(!check_perms('users_view_seedleech') && $uid != $LoggedUser['ID'] && $Paranoia>=2)
+		return array();
+		
+	if(is_array($r))
+		return $r;
 	$r = array();
 	
 	$q = "
@@ -1411,7 +1413,6 @@ function get_snatched_torrents($uid) {
 	while(list($id) = $DB->next_record()) {
 		array_push($r, $id);
 	}
-	$Cache->cache_value("snatched", $r);
 	return $r;
 }
 
